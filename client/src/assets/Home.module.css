@@ -1,0 +1,25 @@
+.container {
+  background-color: black;
+  height: 100%;
+  display: grid;
+}
+.main {
+  color: white;
+  display: grid;
+  justify-self: center;
+  align-self: center;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: 
+    "brand"
+    "sign-up";
+  border: 1px solid grey;
+  padding: 20px 30px;
+}
+
+.sign-up {
+  grid-area: sign-up;
+}
+
+a {
+  
+}
