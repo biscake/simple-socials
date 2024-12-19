@@ -5,29 +5,29 @@ import { Form, redirect } from "react-router-dom";
 import formStyles from './forms.module.css';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const usernameRegex = /^[a-z0-9_\.]+$/;
 
 const SignupForm = () => {
   const [body, setBody] = useState({username: '', password: '', passwordCfm: '', email: ''});
-  const [usernameStatus, setUsernameStatus] = useState();
+  const [usernameExist, setUsernameExist] = useState();
   const [err, setErr] = useState({});
 
+  // fetch existing user from api
   useEffect(() => {
-    if (body.username === '') {
-      setUsernameStatus('');
+    if (!usernameRegex.test(body.username)) {
+      setUsernameExist(false);
       return;
     }
-
     const controller = new AbortController();
-    
+      
     const fetchUsername = () => {
       const signal = controller.signal;
       axios.post('http://localhost:3000/api/user/check', {username: body.username}, {signal: signal})
         .then(res => {
-          setUsernameStatus(res.data);
+          res.data ? setUsernameExist(true) : setUsernameExist(false);
         })
         .catch(err => console.error(err));
     }
-
     const timer = setTimeout(() => {
       fetchUsername();
     }, 500);
@@ -39,12 +39,12 @@ const SignupForm = () => {
   }, [body.username]);
 
   const onChange = (e) => {
-    const newBody = {...body, [e.target.name]: e.target.value};
-    const newErr = {...err, [e.target.name === 'passwordCfm' ? 'password' : e.target.name]: ''};
-    console.log(err);
-    setErr(newErr);
-    setBody(newBody);
-  }
+    setBody({...body, [e.target.name]: e.target.value});
+    const newErr = {...err};
+    delete newErr[e.target.name === 'passwordCfm' ? 'password' : e.target.name];
+    setErr({...newErr});
+
+  }  
 
   const submitCredential = (e) => {
     e.preventDefault();
@@ -69,12 +69,14 @@ const SignupForm = () => {
 
     //post request to server
     if (isValid) {
-      axios.post('http://localhost:3000/sign-up', data, {headers: {'Content-Type': 'application/json'}})
+      axios.post('http://localhost:3000/api/user/register', data, {headers: {'Content-Type': 'application/json'}})
         .then(res => {
+          console.log(res);
           if (res.data.success) {
             redirect('/home');
           } else {
             //TODO: display error
+            redirect('/error');
           }
         })
         .catch(err => console.error(err));
@@ -86,7 +88,10 @@ const SignupForm = () => {
       <div className={formStyles['custom_input']}>
         <input name="username" type="text" placeholder="Username" id="username" onChange={onChange} value={body.username} className={formStyles.input}/>
       </div>
-      {usernameStatus && <span style={{color: usernameStatus === "Valid username" ? 'lightgreen' : 'red'}}>{usernameStatus}</span>}
+      {err.username 
+        ? <span style={{color: 'red'}}>{err.username}</span>
+        : usernameExist && <span style={{color: !usernameExist ? 'lightgreen' : 'red'}}>{usernameExist ? 'Username already in use' : 'Valid username'}</span>
+      }
       <div className={formStyles['custom_input']}>
         <input name="email" type="text" placeholder="Email" id="email" onChange={onChange} value={body.email} className={formStyles.input}/>
       </div>
