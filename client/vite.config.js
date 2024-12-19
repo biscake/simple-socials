@@ -10,6 +10,11 @@ export default defineConfig({
         target: "http://localhost:3000",
         changeOrigin: true,
         secure: false
+      },
+      "/api/sign-up" : {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false
       }
     }
   }

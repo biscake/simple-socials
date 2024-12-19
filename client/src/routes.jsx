@@ -1,9 +1,14 @@
 import Home from './components/Home';
+import Signup from './components/forms/Signup';
 
 const routes = [
   {
     path: '/',
-    element: <Home />
+    element: <Home/>
+  },
+  {
+    path: '/sign-up',
+    element: <Signup/>
   }
 ]
 
