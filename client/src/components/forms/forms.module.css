@@ -34,27 +34,31 @@
 	color: #DDDDDD;
 }
 
-.log-in-btn {
-  composes: button from '../../assets/index.css';
-	border-radius: 5px;
+.button {
+	background-color: #0095f6;
+	color: white;
+	font-size: 1.2rem;
+	font-weight: 700;
+	cursor: pointer;
+  border-radius: 5px;
 	padding: 5px 10px;
 }
 
-.log-in-btn {
+.button {
   border: none;
   transition: all 0.5s;
   cursor: pointer;
   box-shadow: 0 10px 20px -8px rgba(0, 0, 0,.7);
 }
 
-.log-in-btn{
+.button{
   cursor: pointer;
   display: inline-block;
   position: relative;
   transition: 0.5s;
 }
 
-.log-in-btn:after {
+.button:after {
   content: '»';
   position: absolute;
   opacity: 0;  
@@ -62,12 +66,12 @@
   transition: 0.5s;
 }
 
-.log-in-btn:hover{
+.button:hover{
   padding-right: 24px;
   padding-left:8px;
 }
 
-.log-in-btn:hover:after {
+.button:hover:after {
   opacity: 1;
   right: 140px;
 }

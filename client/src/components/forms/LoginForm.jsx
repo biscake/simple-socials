@@ -31,7 +31,7 @@ const LoginForm = () => {
       <div className={formStyles['custom_input']}>
         <input name="password" type="password" placeholder="Password" id="password" className={formStyles.input} onChange={onChange} value={body.password}/>
       </div>
-      <button className={formStyles['log-in-btn']} type='submit'>Log in</button>
+      <button className={formStyles.button} type='submit'>Log in</button>
     </Form>
   )
 }
