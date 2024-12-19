@@ -35,7 +35,7 @@
 }
 
 .log-in-btn {
-  composes: button from './index.css';
+  composes: button from '../../assets/index.css';
 	border-radius: 5px;
 	padding: 5px 10px;
 }

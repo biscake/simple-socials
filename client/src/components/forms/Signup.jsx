@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState } from "react";
 import { Form, redirect } from "react-router-dom";
-// import formStyles from './Forms.module.css';
+import formStyles from './forms.module.css';
 
 const SignupForm = () => {
   const [body, setBody] = useState({username: '', password: '', passwordCfm: '', email: ''});
