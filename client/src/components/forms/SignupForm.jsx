@@ -1,111 +1,52 @@
 import axios from 'axios';
-import { array } from 'prop-types';
-import { useEffect, useState } from "react";
-import { Form, redirect } from "react-router-dom";
+import { FormProvider, useForm } from 'react-hook-form';
+import { redirect, useNavigate } from "react-router-dom";
+import { email_validation, password_validation, passwordCfm_validation, username_validation } from '../../utils/inputValidations';
 import formStyles from './forms.module.css';
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const usernameRegex = /^[a-z0-9_\.]+$/;
+import { Input } from './Input';
 
 const SignupForm = () => {
-  const [body, setBody] = useState({username: '', password: '', passwordCfm: '', email: ''});
-  const [usernameExist, setUsernameExist] = useState();
-  const [err, setErr] = useState({});
+  const methods = useForm({mode: 'onChange'});
+  const navigate = useNavigate();
 
-  // fetch existing user from api
-  useEffect(() => {
-    if (!usernameRegex.test(body.username)) {
-      setUsernameExist(false);
-      return;
-    }
-    const controller = new AbortController();
-      
-    const fetchUsername = () => {
-      const signal = controller.signal;
-      axios.post('http://localhost:3000/api/user/check', {username: body.username}, {signal: signal})
-        .then(res => {
-          res.data ? setUsernameExist(true) : setUsernameExist(false);
-        })
-        .catch(err => console.error(err));
-    }
-    const timer = setTimeout(() => {
-      fetchUsername();
-    }, 500);
-
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [body.username]);
-
-  const onChange = (e) => {
-    setBody({...body, [e.target.name]: e.target.value});
-    const newErr = {...err};
-    delete newErr[e.target.name === 'passwordCfm' ? 'password' : e.target.name];
-    setErr({...newErr});
-
-  }  
-
-  const submitCredential = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    let data = {};
-    formData.forEach((value, key) => data[key] = value);
-
-    const validateInputs = () => {
-      //check if valid email
-      if (!emailRegex.test(body.email)) {
-        setErr(prev => ({...prev, email: "Invalid email address"}));
-      }
-      //check if password match
-      if (body.password !== body.passwordCfm) {
-        setErr(prev => ({...prev, password: "Password does not match"}));
-      }
-
-      return Object.keys(err).length === 0;
-    }
-
-    const isValid = validateInputs();
-
+  const submitCredential = methods.handleSubmit(data =>  {
+    console.log(data);
     //post request to server
-    if (isValid) {
-      axios.post('http://localhost:3000/api/user/register', data, {headers: {'Content-Type': 'application/json'}})
-        .then(res => {
-          console.log(res);
-          if (res.data.success) {
-            redirect('/home');
-          } else {
-            //TODO: display error
-            redirect('/error');
-          }
-        })
-        .catch(err => console.error(err));
-    }
-  }
+    axios.post('http://localhost:3000/api/user/register', data, {headers: {'Content-Type': 'application/json'}})
+      .then(res => {
+        if (res.data.success) {
+          return navigate('/home');
+        } else {
+          //TODO: display error
+          return navigate('/error');
+        }
+      })
+      .catch(err => console.error(err));
+  })
 
   return (
-    <Form method='post' onSubmit={submitCredential} className={formStyles.form}>
-      <div className={formStyles['custom_input']}>
-        <input name="username" type="text" placeholder="Username" id="username" onChange={onChange} value={body.username} className={formStyles.input}/>
-      </div>
-      {err.username 
-        ? <span style={{color: 'red'}}>{err.username}</span>
-        : usernameExist && <span style={{color: !usernameExist ? 'lightgreen' : 'red'}}>{usernameExist ? 'Username already in use' : 'Valid username'}</span>
-      }
-      <div className={formStyles['custom_input']}>
-        <input name="email" type="text" placeholder="Email" id="email" onChange={onChange} value={body.email} className={formStyles.input}/>
-      </div>
-      {err.email && <span style={{color: 'red'}}>{err.email}</span>}
-      <div className={formStyles['custom_input']}>
-        <input name="password" type="password" placeholder="Password" id="password" onChange={onChange} value={body.password} className={formStyles.input}/>
-      </div>
-      <div className={formStyles['custom_input']}>
-        <input name="passwordCfm" type="password" placeholder="Confirm Password" id="passwordCfm" onChange={onChange} value={body.passwordCfm} className={formStyles.input}/>
-      </div>
-      {err.password && <span style={{color: 'red'}}>{err.password}</span>}
+    <FormProvider {...methods}>
+      <form 
+        method='post' 
+        noValidate
+        onSubmit={e => e.preventDefault} 
+        className={formStyles.form}
+      >
+        <Input {...username_validation} />
+        <Input {...email_validation}/>
+        <Input {...password_validation}/>
+        <Input {...passwordCfm_validation(methods.watch)}/>
+        <button 
+          type='submit' 
+          className={formStyles.button}
+          onClick={submitCredential}
+        >
+          Register
+        </button>
 
-      <button type='submit' className={formStyles.button}>Register</button>
-    </Form>
+      </form>
+    </FormProvider>
+    
   )
 }
 

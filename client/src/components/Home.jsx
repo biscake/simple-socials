@@ -1,17 +1,21 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from '../assets/Home.module.css';
 import LoginForm from "./forms/LoginForm";
+import SignupForm from "./forms/SignupForm";
 
-const Home = ({formStyles}) => {
+const Home = () => {
+  const [isLoginForm, setIsLoginForm] = useState(true);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.main}>
         <div className={styles.welcome}>Insta</div>
-        <LoginForm formStyles={formStyles}/>
+        {isLoginForm? <LoginForm/> : <SignupForm/>}
       </div>
       <div className={styles['sign-up']}>
-        Don&#39;t have an account?&nbsp;
-        <Link to='/sign-up'>Sign up</Link>
+        {isLoginForm? "Don't have an account? " : "Already have an account? "}
+        <button className={styles.button} onClick={() => setIsLoginForm(!isLoginForm)}>{isLoginForm? 'Register' : 'Log in'}</button>
       </div>
     </div>
   )
