@@ -35,7 +35,7 @@ function hashPasswordMiddleware(req, res, next) {
 
 function addUserToDb(req, res, next) {
   try {
-    db.insertUser(req.body.username, req.pwHash);
+    db.insertUser(req.body.username, req.body.email, req.pwHash);
     res.json({success: true, user: {username: req.body.username}});
   } catch (err) {
     next(err);

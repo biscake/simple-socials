@@ -28,8 +28,8 @@ async function getUserByUsername(username) {
   return result.rows[0];
 }
 
-async function insertUser(username, hash) {
-  await pool.query('INSERT INTO users (username, pwHash) VALUES ($1, $2)', [username, hash]);
+async function insertUser(username, email, hash) {
+  await pool.query('INSERT INTO users (username, email, pwHash) VALUES ($1, $2, $3)', [username, email, hash]);
 }
 
 module.exports = {
