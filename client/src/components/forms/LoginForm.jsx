@@ -1,38 +1,47 @@
 import axios from 'axios';
 import { useState } from "react";
+import { FormProvider, useForm } from 'react-hook-form';
 import { Form } from "react-router-dom";
 import formStyles from './forms.module.css';
-
-
-
+import { Input } from './Input';
 
 const LoginForm = () => {
-  const [body, setBody] = useState({username: '', password: ''});
+  const { register, handleSubmit } = useForm();
 
-  const onChange = (e) => {
-    const newBody = {...body, [e.target.name]: e.target.value};
-    setBody(newBody);
-  }
-
-  const submitCredential = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    let data = {};
-    formData.forEach((value, key) => data[key] = value);
+  const submitCredential = data => {
+    console.log(data);
     axios.post('/log-in', {body: data, headers: {'Content-Type': 'application/json'}})
       .then(res => console.log(res))
       .catch(err => console.error(err));
   }
+
   return (
-    <Form method='post' onSubmit={submitCredential} className={formStyles.form}>
-      <div className={formStyles['custom_input']}>
-        <input name="username" type="text" placeholder="Username" id="username" className={formStyles.input} onChange={onChange} value={body.username}/>
-      </div>
-      <div className={formStyles['custom_input']}>
-        <input name="password" type="password" placeholder="Password" id="password" className={formStyles.input} onChange={onChange} value={body.password}/>
-      </div>
-      <button className={formStyles.button} type='submit'>Log in</button>
-    </Form>
+    <form 
+      method='post' 
+      onSubmit={handleSubmit(data => submitCredential(JSON.stringify(data)))} 
+      className={formStyles.form}
+    >
+      <input
+        name="username"
+        id="username"
+        type="text"
+        placeholder="Username"
+        {...register('username')}
+      />
+      <input
+        name="password"
+        id="password"
+        type="password"
+        placeholder="Password"
+        {...register('password')}
+      />
+      <button 
+        className={formStyles.button} 
+        type='submit'
+      >
+        Log in
+      </button>
+    </form>
   )
 }
 

@@ -1,7 +1,7 @@
 import { useFormContext } from 'react-hook-form';
 import styles from '../forms/forms.module.css';
 
-export const Input = ({ type, id, placeholder, onChange, value, name, validation }) => {
+export const Input = ({ type, id, placeholder, name, validation }) => {
   const { register, formState: { errors } } = useFormContext();
 
   const inputError = errors[name];
@@ -18,8 +18,6 @@ export const Input = ({ type, id, placeholder, onChange, value, name, validation
         type={type}
         className={styles.input}
         placeholder={placeholder}
-        onChange={onChange}
-        value={value}
         {...register(name, validation)}
       />
     </div>

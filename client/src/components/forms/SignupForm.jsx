@@ -9,8 +9,7 @@ const SignupForm = () => {
   const methods = useForm({mode: 'onChange'});
   const navigate = useNavigate();
 
-  const submitCredential = methods.handleSubmit(data =>  {
-    console.log(data);
+  const submitCredential = data => {
     //post request to server
     axios.post('http://localhost:3000/api/user/register', data, {headers: {'Content-Type': 'application/json'}})
       .then(res => {
@@ -22,14 +21,14 @@ const SignupForm = () => {
         }
       })
       .catch(err => console.error(err));
-  })
+  }
 
   return (
     <FormProvider {...methods}>
       <form 
         method='post' 
         noValidate
-        onSubmit={e => e.preventDefault} 
+        onSubmit={methods.handleSubmit(submitCredential)} 
         className={formStyles.form}
       >
         <Input {...username_validation} />
