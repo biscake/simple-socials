@@ -30,3 +30,10 @@
   margin: 15px 0px;
   padding: 1.5rem;
 }
+
+.button {
+	background: none;
+  border: none;
+	color: #0095f6;
+  cursor: pointer;
+}
