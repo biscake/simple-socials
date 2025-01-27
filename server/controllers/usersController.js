@@ -3,20 +3,12 @@ const bcrypt = require('bcryptjs');
 const db = require('../db/queries');
 const asyncHandler = require('express-async-handler');
 const ExistingUserError = require('../errors/customError');
-const { validateForm, validate } = require('../utils/validations');
+const { validateForm } = require('../utils/validateRegisterUsers');
+const ValidationErrors = require('../errors/customError');
 
 // expres-validator for forms
 
 const saltRounds = 10;
-
-const checkUserExist = asyncHandler(async (req, res, next) => {
-  const user = await db.getUserByUsername(req.body.username);
-
-  if (user) {
-    throw new ExistingUserError('Existing username');
-  }
-  next();
-})
 
 function hashPasswordMiddleware(req, res, next) {
   bcrypt.genSalt(saltRounds, (err, salt) => {
@@ -36,7 +28,7 @@ function hashPasswordMiddleware(req, res, next) {
 function addUserToDb(req, res, next) {
   try {
     db.insertUser(req.body.username, req.body.email, req.pwHash);
-    res.json({success: true, user: {username: req.body.username}});
+    res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
     next(err);
   }
@@ -44,11 +36,8 @@ function addUserToDb(req, res, next) {
 
 module.exports = {
   registerUser: [
-    validateForm,
-    validate,
-    checkUserExist,
+    ...validateForm,
     hashPasswordMiddleware, 
     addUserToDb
   ],
-  checkUserExist
 }

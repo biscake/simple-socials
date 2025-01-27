@@ -1,9 +1,9 @@
-class ExistingUserError extends Error {
-  constructor(message) {
+class ValidationError extends Error {
+  constructor(message, errors) {
     super(message);
-    this.statusCode = 404;
-    this.name = "ExistingUsername";
+    this.statusCode = 409;
+    this.errors = errors;
   }
 }
 
-module.exports = ExistingUserError;
+module.exports = ValidationError;

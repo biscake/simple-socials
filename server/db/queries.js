@@ -1,21 +1,8 @@
 const pool = require("./pool");
 
-async function getAllUsernames() {
-  const result = await pool.query("SELECT * FROM usernames");
-  return result.rows;
-}
-
-async function insertUsername(username) {
-  await pool.query("INSERT INTO usernames (username) VALUES ($1)", [username]);
-}
-
-async function searchUsername(query) {
- const result = await pool.query("SELECT * FROM usernames WHERE username LIKE ($1)", ['%' + query + '%']);
- return result.rows;
-}
-
-async function deleteUsernames() {
-  await pool.query("DELETE FROM usernames");
+async function getEmailByEmail(email) {
+  const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+  return result.rows[0];
 }
 
 async function getUserPwHash(user) {
@@ -33,11 +20,8 @@ async function insertUser(username, email, hash) {
 }
 
 module.exports = {
-  getAllUsernames,
-  insertUsername,
-  searchUsername,
-  deleteUsernames,
   getUserPwHash,
   getUserByUsername,
-  insertUser
+  insertUser,
+  getEmailByEmail
 };

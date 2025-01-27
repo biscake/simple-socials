@@ -11,15 +11,15 @@ loginRouter.post('/', (req, res) => {
   bcrypt.compare(req.body.password, storedHashedPassword, (err, result) => {
     if (err) {
       console.error('Error comparing passwords', err);
-      return;
+      res.status(500).send("Internal Server Error")
     }
 
     if (result) {
       console.log('Passwords match! Authenticated');
-      res.json({success: true});
+      res.status(200).send("Status: OK");
     } else {
       console.log('Passwords do not match!');
-      res.json({success: false});
+      res.status(403).send("Status: Invalid password");
     }
   })
 
