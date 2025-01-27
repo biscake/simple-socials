@@ -1,16 +1,13 @@
 import axios from 'axios';
-import { useState } from "react";
-import { FormProvider, useForm } from 'react-hook-form';
-import { Form } from "react-router-dom";
-import formStyles from './forms.module.css';
-import { Input } from './Input';
+import { useForm } from 'react-hook-form';
+import styles from './forms.module.css';
+
 
 const LoginForm = () => {
   const { register, handleSubmit } = useForm();
 
   const submitCredential = data => {
-    console.log(data);
-    axios.post('/log-in', {body: data, headers: {'Content-Type': 'application/json'}})
+    axios.post('http:localhost/api/user/log-in', data, {headers: {'Content-Type': 'application/json'}})
       .then(res => console.log(res))
       .catch(err => console.error(err));
   }
@@ -18,30 +15,45 @@ const LoginForm = () => {
   return (
     <form 
       method='post' 
-      onSubmit={handleSubmit(data => submitCredential(JSON.stringify(data)))} 
-      className={formStyles.form}
+      onSubmit={handleSubmit(data => submitCredential(data))} 
+      className={styles.form}
     >
-      <input
+      <Input
         name="username"
         id="username"
         type="text"
         placeholder="Username"
-        {...register('username')}
+        register={register}
       />
-      <input
+      <Input
         name="password"
         id="password"
         type="password"
         placeholder="Password"
-        {...register('password')}
+        register={register}
       />
       <button 
-        className={formStyles.button} 
+        className={styles.button} 
         type='submit'
       >
         Log in
       </button>
     </form>
+  )
+}
+
+const Input = ({name, id, type, placeholder, register}) => {
+  return (
+    <div className={styles['custom_input']}>
+      <input
+        name={name}
+        id={id}
+        type={type}
+        placeholder={placeholder}
+        className={styles.input}
+        {...register(name)}
+      />
+    </div>
   )
 }
 

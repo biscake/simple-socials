@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export const username_validation = {
   name: "username",
   type: "username",
@@ -18,11 +16,6 @@ export const username_validation = {
       value: 4,
       message: "Username too short"
     },
-    validate: async (v) => {
-      const res = await axios.post('http://localhost:3000/api/user/check', {username: v}, {headers: {'Content-Type': 'application/json'}});
-      const data = res.data;
-      if (data) return "Existing user";
-    }
   }
 }
 

@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
-import styles from '../forms/forms.module.css';
+// import styles from '../forms/forms.modules.css';
+import styles from './forms.module.css';
 
 export const Input = ({ type, id, placeholder, name, validation }) => {
   const { register, formState: { errors } } = useFormContext();
@@ -10,7 +11,7 @@ export const Input = ({ type, id, placeholder, name, validation }) => {
     <div className={styles['custom_input']}>
       {inputError
         ? <InputError message={inputError.message} />
-        : <span style={{color: 'red'}}>&nbsp;</span>
+        : <></>
       }
       <input
         name={name}
