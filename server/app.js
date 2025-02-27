@@ -4,9 +4,6 @@ const app = express();
 const bcrypt = require('bcryptjs');
 const cors = require('cors')
 const errorHandler = require('./errors/errorHandler');
-
-const loginRoute = require('./routes/login');
-// const signupRoute = require('./routes/signup');
 const apiRouter = require('./routes/api.js');
 
 //import .env
@@ -20,7 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use("/api", apiRouter);
-// app.use("/sign-up", signupRoute);
 
 // error handler
 app.use(errorHandler);
