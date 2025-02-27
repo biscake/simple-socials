@@ -1,21 +1,26 @@
 import axios from 'axios';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styles from './forms.module.css';
 import { Input } from './Input';
 
 const LoginForm = () => {
+  const [err, setErr] = useState([]);
+
   const methods = useForm();
   const navigate = useNavigate();
 
   const submitCredential = data => {
-    axios.post('http:localhost/api/user/log-in', data, {headers: {'Content-Type': 'application/json'}})
-      .then(res => {
-        if (res.status >= 200) {
-          return navigate('/home');
+    axios.post('http://localhost:3000/api/users/login', data, {headers: {'Content-Type': 'application/json'}})
+      .then(res => navigate('/home'))
+      .catch(err => {
+        if (err.response && err.response.data && err.response.data.errors) {
+          setErr(err.response.data.errors);
+        } else {
+          setErr([{msg: "An unexpected error occurred. Please try again."}]);
         }
-      })
-      .catch(err => console.error(err));
+      });
   }
 
   return (
@@ -37,6 +42,7 @@ const LoginForm = () => {
           type="password"
           placeholder="Password"
         />
+        {err && err.map((e, idx) => <p style={{color: "red"}} key={idx}>{e.msg}</p>)}
         <button 
           className={styles.button} 
           type='submit'

@@ -15,12 +15,14 @@ const SignupForm = () => {
   const submitCredential = data => {
     //post request to server
     axios.post('http://localhost:3000/api/users/register', data, {headers: {'Content-Type': 'application/json'}})
-      .then(res => {
-        if (res.status >= 200) {
-          return navigate('/home');
+      .then(res => navigate('/home'))
+      .catch(err => {
+        if (err.response && err.response.data && err.response.data.errors) {
+          setErr(err.response.data.errors);
+        } else {
+          setErr([{msg: "An unexpected error occurred. Please try again."}]);
         }
       })
-      .catch(err => setErr(err.response.data.errors));
   }
 
   return (
@@ -44,7 +46,6 @@ const SignupForm = () => {
         </button>
       </form>
     </FormProvider>
-    
   )
 }
 
