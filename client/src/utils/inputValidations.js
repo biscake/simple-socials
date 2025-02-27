@@ -51,7 +51,7 @@ export const passwordCfm_validation = watch => ({
       message: 'Required',
     },
     validate: (val) => {
-      return watch('password', '') === val || "Password does not match"
+      return watch('password') === val || "Password does not match"
     }
   }
 })

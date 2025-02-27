@@ -16,7 +16,7 @@ const SignupForm = () => {
     //post request to server
     axios.post('http://localhost:3000/api/users/register', data, {headers: {'Content-Type': 'application/json'}})
       .then(res => {
-        if (res.data.success) {
+        if (res.status >= 200) {
           return navigate('/home');
         }
       })
