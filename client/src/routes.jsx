@@ -1,14 +1,14 @@
 import Home from './components/Home';
-import Signup from './components/forms/SignupForm';
+import Welcome from './components/Welcome';
 
 const routes = [
   {
     path: '/',
-    element: <Home/>
+    element: <Welcome/>
   },
   {
-    path: '/sign-up',
-    element: <Signup/>
+    path: '/home',
+    element: <Home/>
   }
 ]
 

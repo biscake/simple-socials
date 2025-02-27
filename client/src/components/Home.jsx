@@ -1,23 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import styles from '../assets/Home.module.css';
-import LoginForm from "./forms/LoginForm";
-import SignupForm from "./forms/SignupForm";
+import axios from "axios";
+import { useEffect } from "react";
 
 const Home = () => {
-  const [isLoginForm, setIsLoginForm] = useState(true);
-
+  useEffect(() => {
+    axios.get('http://localhost:3000/api/posts', { withCredentials: true })
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
+  })
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.main}>
-        <div className={styles.welcome}>Insta</div>
-        {isLoginForm? <LoginForm/> : <SignupForm/>}
-      </div>
-      <div className={styles['sign-up']}>
-        {isLoginForm? "Don't have an account? " : "Already have an account? "}
-        <button className={styles.button} onClick={() => setIsLoginForm(!isLoginForm)}>{isLoginForm? 'Register' : 'Log in'}</button>
-      </div>
-    </div>
+    <p>Temp</p>
   )
 }
 
