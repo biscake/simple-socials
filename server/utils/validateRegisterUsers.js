@@ -1,5 +1,6 @@
 const { body, validationResult } = require("express-validator");
 const db = require('../db/queries');
+const ValidationError = require("../errors/ValidationError");
 
 const validateFormPassword = [
   body('password')
@@ -11,8 +12,9 @@ const validateFormPassword = [
 
 const validatePassword = (req, res, next) => {
   const errors = validationResult(req);
+
   if (!errors.isEmpty()) {
-    return res.status(400).json({errors: errors.array()});
+    throw new ValidationError(400, errors.array());
   }
   next();
 }
@@ -27,7 +29,7 @@ const validateFormDuplicates = [
     .custom(async (value) => {
       const user = await db.getUserByUsername(value);
       if (user) {
-        throw new Error("Username is already taken")
+        throw new Error("Username is already taken");
       }
     })
     .escape(),
@@ -48,7 +50,7 @@ const validateFormDuplicates = [
 const validateDuplicates = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(409).json({errors: errors.array()});
+    throw new ValidationError(409, errors.array());
   }
   next();
 }

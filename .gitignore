@@ -1,5 +1,6 @@
 /client/node_modules
 /server/node_modules
 .env
-/server/id_resa_priv.pem
+/server/id_rsa_priv.pem
 /server/keygen.js
+.gitignore
