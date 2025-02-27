@@ -11,12 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 async function main() {
   console.log("seeding...");
-  const client = new Client({
-    host: 'localhost',
-    database: 'simple_socials',
-    user: 'lard',
-    password: 'ljh10001'
-  });
+  const client = new Client();
   await client.connect();
   await client.query(SQL);
   await client.end();
