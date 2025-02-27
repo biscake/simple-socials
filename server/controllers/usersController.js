@@ -19,7 +19,6 @@ const hashPassword = asyncHandler(async (req, res, next) => {
 
 const addUserToDb = asyncHandler(async (req, res) => {
   await db.insertUser(req.body.username, req.body.email, req.pwHash);
-  const user = await db.getUserByUsername(req.body.username);
 
   res.status(201).json({
     success: true, 
@@ -29,20 +28,20 @@ const addUserToDb = asyncHandler(async (req, res) => {
 
 const login = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-      if (err) { 
-        return next(err);
-      }
+    if (err) { 
+      return next(err);
+    }
 
-      if (!user) {
-          throw new AuthenticationError("Login failed", 401);
-      }
+    if (!user) {
+        next(new AuthenticationError("Login failed", 401));
+    }
 
-      req.logIn(user, (err) => {
-          if (err) {
-            return next(err);
-          }
-          return res.status(200).json({ message: "Login successful", user });
-      });
+    req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+        return res.status(200).json({ message: "Login successful", user });
+    });
   })(req, res, next);
 }
 

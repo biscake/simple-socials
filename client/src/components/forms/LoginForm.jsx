@@ -13,11 +13,15 @@ const LoginForm = () => {
 
   const submitCredential = data => {
     axios.post('http://localhost:3000/api/users/login', data, {headers: {'Content-Type': 'application/json'}})
-      .then(res => navigate('/home'))
+      .then(res => {
+        console.log(res);
+        navigate('/home');
+      })
       .catch(err => {
         if (err.response && err.response.data && err.response.data.errors) {
           setErr(err.response.data.errors);
         } else {
+          console.log(err)
           setErr([{msg: "An unexpected error occurred. Please try again."}]);
         }
       });
