@@ -39,8 +39,8 @@ const validateFormDuplicates = [
     .toLowerCase()
     .matches(/^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/)
     .custom(async (value) => {
-      const email = await db.getEmailByEmail(value);
-      if (email) {
+      const user = await db.getUserByEmail(value);
+      if (user) {
         throw new Error("Email is already in use");
       }
     })

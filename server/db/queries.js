@@ -15,7 +15,7 @@ async function getUserPwHash(user) {
     const result = await pool.query('SELECT pwHash FROM users WHERE username = $1', [user]);
     return result.rows[0].pwhash;
   } catch (error) {
-    throw new QueryError("Username not found", 404);
+    throw new QueryError("User not found", 404);
   }
 }
 
@@ -24,7 +24,16 @@ async function getUserByUsername(username) {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     return result.rows[0] || null;
   } catch (error) {
-    throw new QueryError("Username not found", 404);
+    throw new QueryError("User not found", 404);
+  }
+}
+
+async function getUserById(id) {
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+    return result.rows[0] || null;
+  } catch (error) {
+    throw new QueryError("User not found", 404);
   }
 }
 
@@ -45,5 +54,6 @@ module.exports = {
   getUserPwHash,
   getUserByUsername,
   insertUser,
-  getUserByEmail
+  getUserByEmail,
+  getUserById
 };

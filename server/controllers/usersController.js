@@ -1,9 +1,8 @@
-const { getUserPwHash } = require('../db/queries');
 const bcrypt = require('bcryptjs');
 const db = require('../db/queries');
 const { validateForm } = require('../utils/validateRegisterUsers');
 const asyncHandler = require('express-async-handler');
-const AuthenticationError = require('../errors/AuthenticationError'); 
+const passport = require('passport');
 
 const saltRounds = 10;
 
@@ -20,26 +19,34 @@ const hashPassword = asyncHandler(async (req, res, next) => {
 
 const addUserToDb = asyncHandler(async (req, res) => {
   await db.insertUser(req.body.username, req.body.email, req.pwHash);
-  res.status(201).json({ message: "User registered successfully" });
+  const user = await db.getUserByUsername(req.body.username);
+
+  res.status(201).json({
+    success: true, 
+    message: "User registered successfully",
+  });
 })
 
-const login = asyncHandler(async (req, res) => {
-  const storedHashedPassword = await getUserPwHash(req.body.username);
+const login = (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+      if (err) { 
+        return next(err);
+      }
 
-  const isMatch = await bcrypt.compare(req.body.password, storedHashedPassword);
+      if (!user) {
+          throw new AuthenticationError("Login failed", 401);
+      }
 
-  if (isMatch) {
-      console.log('Passwords match! Authenticated');
-      res.status(200).json({ message: "Authentication successful" });
+      req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+          return res.status(200).json({ message: "Login successful", user });
+      });
+  })(req, res, next);
+}
 
-  } else {
-      console.log('Passwords do not match!');
-      throw new AuthenticationError("Invalid credentials", 401);
-  }
-});
-
-
-module.exports = {
+module.exports =  {
   registerUser: [
     ...validateForm,
     hashPassword, 

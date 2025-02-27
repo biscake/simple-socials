@@ -1,38 +1,43 @@
-const fs = require('fs');
-const path = require('path');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const { getUserById, getUserByUsername } = require('../db/queries');
+const LocalStrategy = require('passport-local').Strategy;
+const passport = require('passport');
+const AuthenticationError = require('../errors/AuthenticationError');
 const bcrypt = require('bcryptjs');
-const getUser = require('../db/queries').getUser;
 
-const pathToKey = path.join(__dirname, '..', 'id_rsa_pub.pem');
-const PUB_KEY = fs.readFileSync(pathToKey, 'utf8');
-
-const options = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken();
-  secretOrKey: PUB_KEY,
-  algorithms: ['RS256']
-}
-
-const strategy = new JwtStrategy(options, (payload, done) => {
-  // const user = getUser(payload.sub).catch(err => done(err, null));
-  // if (user) {
-  //   return done(null, user);
-  // } else {
-  //   return done(null, false);
-  // }
-  getUser(payload.sub)
+const verifyCallback = (username, password, done) => {
+  getUserByUsername(username)
     .then(user => {
-      if (user) {
+      if (!user) {
+        return done(new AuthenticationError("Invalid username", 404), false);
+      }
+      const storedHashedPassword = user.pwhash;
+      const isMatch = bcrypt.compare(password, storedHashedPassword);
+
+      if (isMatch) {
         return done(null, user);
       } else {
-        return done(null, false);
+        return done(new AuthenticationError("Invalid credentials", 401), false);
       }
     })
-    .catch(err => done(err, null));
-  
+    .catch(err => {
+      return done(err);
+    })
+}
+
+const strategy = new LocalStrategy(verifyCallback);
+
+passport.use(strategy);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 })
 
-module.exports = passport => {
-  passport.use(strategy);
-}
+passport.deserializeUser((userId, done) => {
+  getUserById(userId)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch(err => {
+      done(err);
+    })
+})
