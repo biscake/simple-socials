@@ -16,6 +16,8 @@ apiRouter.post('/users/register', usersController.registerUser);
 
 apiRouter.post("/users/login", usersController.login);
 
+apiRouter.post('/users/logout', usersController.logout);
+
 apiRouter.get('/posts', isAuthenticated, (req, res) => res.send('authenticated'));
 
 module.exports = apiRouter;

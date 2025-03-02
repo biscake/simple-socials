@@ -45,11 +45,27 @@ const login = (req, res, next) => {
   })(req, res, next);
 }
 
+const logout = (req, res, next) => {
+  res.clearCookie('connect.sid');
+  req.logout(err => {
+    if (err) { 
+      return next(err); 
+    }
+    
+    req.session.destroy(err => {
+      if (err) {
+        next(err);
+      }
+    });
+  });
+}
+
 module.exports =  {
   registerUser: [
     ...validateForm,
     hashPassword, 
     addUserToDb
   ],
-  login
+  login,
+  logout
 }
